@@ -1,17 +1,16 @@
 """
-OPE_DB_API
+ope_db_api
 
-Session-based JSONB editing and query engine
-(CAD / PLM style workflow).
+A session-based database data management engine.
+
+Designed to be used as a plug-and-play FastAPI backend component
+with draft → overlay → commit workflows.
 """
-from .metadata import __version__
 
-from .main import create_app
-# from .api.jsonb_api import router as jsonb_router
-# from .api.session_api import router as session_router
+from .app import create_app
 
 __all__ = [
     "create_app",
-    "jsonb_router",
-    "session_router",
 ]
+
+__version__ = "0.1.0"
