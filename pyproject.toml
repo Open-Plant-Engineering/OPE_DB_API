@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ope-db-api"
+version = "0.1.0"
+description = "Session-based JSONB editing and search engine (CAD/PLM style)"
+authors = [{name = "Shivang Kheradiya"}]
+requires-python = ">=3.10"
+
+dependencies = [
+    "fastapi",
+    "sqlalchemy",
+    "pydantic",
+    "uvicorn",
+    "sqlalchemy",
+    "psycopg2",
+    "watchfiles"
+]
+
+[project.urls]
+Homepage = "https://github.com/Open-Plant-Engineering/OPE_DB_API"
+
+[tool.setuptools.packages.find]
+where = ["OPE_DB_API"]
