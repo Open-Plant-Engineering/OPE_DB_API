@@ -1,5 +1,11 @@
 from fastapi import FastAPI
 
+from OPE_DB_API.api import (
+    session_router,
+    overlay_router,
+    commit_router,
+)
+
 
 def create_app() -> FastAPI:
     """
@@ -14,5 +20,9 @@ def create_app() -> FastAPI:
         description="Session-based database data management service",
         version="0.1.0",
     )
+    
+    app.include_router(session_router)
+    app.include_router(overlay_router)
+    app.include_router(commit_router)
 
     return app
