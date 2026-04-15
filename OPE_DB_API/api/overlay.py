@@ -24,7 +24,7 @@ def api_stage_create(
     db: Session = Depends(db_session),
 ):
     validate_domain(domain)
-    row = stage_create(db, domain, payload)
+    row = stage_create.stage_create(db, domain, payload)
     db.commit()
     db.refresh(row)
     return row
@@ -40,7 +40,7 @@ def api_stage_update(
     db: Session = Depends(db_session),
 ):
     validate_domain(domain)
-    row = stage_update(db, domain, overlay_id, value)
+    row = stage_update.stage_update(db, domain, overlay_id, value)
     db.commit()
     return row
 
@@ -53,7 +53,7 @@ def api_stage_delete(
     db: Session = Depends(db_session),
 ):
     validate_domain(domain)
-    row = stage_delete(db, domain, overlay_id)
+    row = stage_delete.stage_delete(db, domain, overlay_id)
     db.commit()
     return {"status": "staged_delete", "overlay_id": overlay_id}
 
@@ -66,4 +66,4 @@ def api_read_overlay(
     db: Session = Depends(db_session),
 ):
     validate_domain(domain)
-    return read_overlay_by_session(db, domain, session_id)
+    return read_overlay_by_session.read_overlay_by_session(db, domain, session_id)

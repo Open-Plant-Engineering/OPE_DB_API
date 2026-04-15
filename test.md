@@ -35,6 +35,10 @@ ATTRIBUTE_ID=101
 curl -X POST \
 "$BASE_URL/$PROJECT_CODE/session/start?session_id=90000000000001&username=atul&hostname=dev-machine"
 ```
+```
+curl -X POST \
+"http://127.0.0.1:8000/XYZ/session/start?session_id=90000000000001&username=atul&hostname=dev-machine"
+```
 
 ### ✅ Expected Response
 
@@ -93,6 +97,22 @@ curl -X POST \
 }'
 ```
 
+```
+curl -X POST \
+"http://127.0.0.1:8000/XYZ/DESI/overlay/create" \
+-H "Content-Type: application/json" \
+-d '{
+  "overlay_id": 200000001,
+  "session_id": 90000000000011,
+  "node_id": 5001,
+  "attribute_id": 101,
+  "value": {
+    "name": "Pump-A",
+    "pressure": 10
+  }
+}'
+```
+
 ✅ This **does not touch live tables yet**.
 
 ***
@@ -130,6 +150,20 @@ curl -X PUT \
 "$BASE_URL/$PROJECT_CODE/$DOMAIN/overlay/update/90000000020001" \
 -H "Content-Type: application/json" \
 -d '{
+  "value": {
+    "name": "Pump-A1",
+    "pressure": 15.0
+  }
+}'
+```
+
+```bash
+curl -X PUT \
+"http://127.0.0.1:8000/XYZ/DESI/overlay/update" \
+-H "Content-Type: application/json" \
+-d '{
+  "overlay_id": 200000001,
+  "session_id": 90000000000011,
   "value": {
     "name": "Pump-A1",
     "pressure": 15.0
