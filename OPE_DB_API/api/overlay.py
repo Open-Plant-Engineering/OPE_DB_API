@@ -24,7 +24,11 @@ def api_stage_create(
     db: Session = Depends(db_session),
 ):
     validate_domain(domain)
-    return stage_create(db, domain, payload)
+    row = stage_create(db, domain, payload)
+    db.commit()
+    db.refresh(row)
+    return row
+
 
 
 @router.put("/update/{overlay_id}")
@@ -36,7 +40,9 @@ def api_stage_update(
     db: Session = Depends(db_session),
 ):
     validate_domain(domain)
-    return stage_update(db, domain, overlay_id, value)
+    row = stage_update(db, domain, overlay_id, value)
+    db.commit()
+    return row
 
 
 @router.delete("/delete/{overlay_id}")
@@ -47,7 +53,9 @@ def api_stage_delete(
     db: Session = Depends(db_session),
 ):
     validate_domain(domain)
-    return stage_delete(db, domain, overlay_id)
+    row = stage_delete(db, domain, overlay_id)
+    db.commit()
+    return {"status": "staged_delete", "overlay_id": overlay_id}
 
 
 @router.get("/{session_id}")

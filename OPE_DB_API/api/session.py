@@ -23,12 +23,15 @@ def api_start_session(
     hostname: str | None = None,
     db: Session = Depends(db_session),
 ):
-    return start_session(
+    ses = start_session(
         db,
         session_id=session_id,
         username=username,
         hostname=hostname,
     )
+    db.commit()
+    db.refresh(ses)
+    return ses
 
 
 @router.get("/active")
@@ -67,4 +70,6 @@ def api_close_session(
     session_id: int,
     db: Session = Depends(db_session),
 ):
-    return close_session(db, session_id=session_id)
+    ses = close_session(db, session_id=session_id)
+    db.commit()
+    return ses
