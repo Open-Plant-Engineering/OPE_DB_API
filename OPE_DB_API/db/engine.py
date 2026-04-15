@@ -23,7 +23,12 @@ def get_engine(code: str) -> Engine:
 
     config = get_config()
     try:
-        db_url = config["projects"][code]["database_url"]
+        pg_cfg = config[config["database_map"][code.upper()]]
+        db_url = (
+            f"postgresql+psycopg2://{pg_cfg['user']}:{pg_cfg['password']}"
+            f"@{pg_cfg['host']}:{pg_cfg['port']}/{pg_cfg['database']}"
+        )
+        
     except KeyError:
         raise KeyError(
             f"No database configuration found for project '{code}'"

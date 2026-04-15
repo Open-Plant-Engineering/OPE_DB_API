@@ -1,11 +1,12 @@
-from fastapi import Depends
+from typing import Generator
 from sqlalchemy.orm import Session
 
-from OPE_DB_API.db import get_db_session
+from OPE_DB_API.db.session import get_db_session
 
 
-def db_session(code: str) -> Session:
+def db_session(code: str) -> Generator[Session, None, None]:
     """
-    FastAPI dependency for DB session.
+    FastAPI dependency that yields a SQLAlchemy Session
+    for the given project code.
     """
-    return Depends(lambda: next(get_db_session(code)))
+    yield from get_db_session(code)
