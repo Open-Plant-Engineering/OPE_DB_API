@@ -2,15 +2,15 @@ from sqlalchemy.orm import Session
 from OPE_DB_API.registry import OVERLAY_TABLE_REGISTRY
 
 
-def stage_create(
+def read_overlay_by_session(
     db: Session,
     domain: str,
-    payload: dict,
+    session_id: int,
 ):
-    """
-    Stage a CREATE operation in the session overlay.
-    """
     overlay_model = OVERLAY_TABLE_REGISTRY[domain]
-    row = overlay_model(**payload)
-    db.add(row)
-    return row
+
+    return (
+        db.query(overlay_model)
+        .filter(overlay_model.session_id == session_id)
+        .all()
+    )
