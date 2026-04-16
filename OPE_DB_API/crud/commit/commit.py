@@ -53,7 +53,6 @@ def commit_session(
                 db,
                 domain,
                 {
-                    "history_id": None,
                     "data_id": o.data_id,
                     "session_id": session_id,
                     "operation_type": 1,
@@ -69,7 +68,6 @@ def commit_session(
                 db,
                 domain,
                 {
-                    "history_id": None,
                     "data_id": o.data_id,
                     "session_id": session_id,
                     "operation_type": 2,
@@ -85,7 +83,6 @@ def commit_session(
                 db,
                 domain,
                 {
-                    "history_id": None,
                     "data_id": o.data_id,
                     "session_id": session_id,
                     "operation_type": 3,

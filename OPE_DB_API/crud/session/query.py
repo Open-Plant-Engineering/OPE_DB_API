@@ -76,7 +76,7 @@ def validate_session_active(
 
     session = db.query(SessionMetadata).filter(
         SessionMetadata.session_id == session_id,
-        SessionMetadata.IsActive == True
+        SessionMetadata.active.is_(True)
     ).one_or_none()
 
     if not session:

@@ -12,6 +12,7 @@ def write_history(
     Payload must already contain externally generated history_id.
     """
     history_model = HISTORY_TABLE_REGISTRY[domain]
+    payload.pop("history_id", None)
     row = history_model(**payload)
     db.add(row)
     return row

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, DateTime, BigInteger
+from sqlalchemy import Column, Integer, DateTime, BigInteger, Sequence
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.sql import func
 
@@ -16,11 +16,10 @@ class DbDataHistoryBase(Base):
 
     history_id = Column(
         BigInteger,
+        Sequence("history_id_seq"),
         primary_key=True,
-        nullable=False,
         doc="Externally generated (e.g. Snowflake) ID",
     )
-
 
     data_id = Column(
         BigInteger,
