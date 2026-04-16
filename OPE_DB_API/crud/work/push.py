@@ -24,16 +24,30 @@ def push_work(
             Overlay.data_id == payload.data_id
         ).delete()
 
-    data_id = payload.data_id
+    row = None
+    if payload.data_id is not None:
+        row = db.query(Overlay).filter(
+            Overlay.data_id == payload.data_id,
+            Overlay.session_id == session_id,
+        ).one_or_none()
 
-    row = Overlay(
-        data_id=data_id,
-        session_id=session_id,
-        node_id=payload.node_id,
-        attribute_id=payload.attribute_id,
-        operation_type=payload.operation_type,
-        value=payload.value,
-    )
+    if row:
+        # ✅ UPDATE existing bucket entry
+        row.node_id = payload.node_id
+        row.attribute_id = payload.attribute_id
+        row.operation_type = payload.operation_type
+        row.value = payload.value
+    else:
+        # ✅ INSERT new bucket entry
+        row = Overlay(
+            data_id=payload.data_id,
+            session_id=session_id,
+            node_id=payload.node_id,
+            attribute_id=payload.attribute_id,
+            operation_type=payload.operation_type,
+            value=payload.value,
+        )
+        db.add(row)
 
     db.add(row)
     return row
