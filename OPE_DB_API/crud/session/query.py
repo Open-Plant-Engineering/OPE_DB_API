@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import MultipleResultsFound
 
 from OPE_DB_API.models import SessionMetadata
-
+from OPE_DB_API.errors import SessionNotActiveError
 
 def get_active_session(
     db: Session,
@@ -74,12 +74,12 @@ def validate_session_active(
     Validate that a session exists and is still active.
     """
 
-    session = db.get(SessionMetadata, session_id)
+    session = db.query(SessionMetadata).filter(
+        SessionMetadata.session_id == session_id,
+        SessionMetadata.IsActive == True
+    ).one_or_none()
 
-    if session is None:
-        raise ValueError("Session not found")
-
-    if not session.active:
-        raise ValueError("Session is not active")
+    if not session:
+        raise SessionNotActiveError(session_id)
 
     return session
