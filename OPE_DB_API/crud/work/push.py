@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+
 from OPE_DB_API.registry import OVERLAY_TABLE_REGISTRY
 from OPE_DB_API.crud.session import validate_session_active
 
@@ -18,12 +19,6 @@ def push_work(
 
     Overlay = OVERLAY_TABLE_REGISTRY[domain]
 
-    # Ensure bucket semantics: remove existing staged change for same data_id
-    if payload.data_id is not None:
-        db.query(Overlay).filter(
-            Overlay.data_id == payload.data_id
-        ).delete()
-
     row = None
     if payload.data_id is not None:
         row = db.query(Overlay).filter(
@@ -32,13 +27,13 @@ def push_work(
         ).one_or_none()
 
     if row:
-        # ✅ UPDATE existing bucket entry
+        # UPDATE existing bucket entry
         row.node_id = payload.node_id
         row.attribute_id = payload.attribute_id
         row.operation_type = payload.operation_type
         row.value = payload.value
     else:
-        # ✅ INSERT new bucket entry
+        # CREATE new bucket entry
         row = Overlay(
             data_id=payload.data_id,
             session_id=session_id,
@@ -49,5 +44,4 @@ def push_work(
         )
         db.add(row)
 
-    db.add(row)
     return row

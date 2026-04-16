@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from OPE_DB_API.registry import OVERLAY_TABLE_REGISTRY
 from OPE_DB_API.crud.session import validate_session_active, close_session
 
-
 def abort_session(
     db: Session,
     *,
@@ -13,22 +12,18 @@ def abort_session(
     """
     Abort an active session.
 
-    Effects:
-    - Discards all staged overlay changes
+    - Clears overlay
     - Does NOT touch live data
     - Does NOT write history
-    - Closes the session
+    - Closes session
     """
 
-    # 1. Ensure session is active
     validate_session_active(db, session_id=session_id)
 
-    # 2. Delete overlay rows for this session
     Overlay = OVERLAY_TABLE_REGISTRY[domain]
 
     db.query(Overlay).filter(
         Overlay.session_id == session_id
     ).delete()
 
-    # 3. Close the session
     close_session(db, session_id=session_id)

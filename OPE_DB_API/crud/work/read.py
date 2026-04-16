@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+
 from OPE_DB_API.registry import (
     LIVE_TABLE_REGISTRY,
     OVERLAY_TABLE_REGISTRY,
@@ -18,14 +19,12 @@ def read_current_work(
     Live = LIVE_TABLE_REGISTRY[domain]
     Overlay = OVERLAY_TABLE_REGISTRY[domain]
 
-    # Fetch overlay rows for session
     overlay_rows = db.query(Overlay).filter(
         Overlay.session_id == session_id
     ).all()
 
     overlay_map = {row.data_id: row for row in overlay_rows}
 
-    # Fetch all live rows
     live_rows = db.query(Live).all()
 
     result = []
@@ -34,8 +33,11 @@ def read_current_work(
         overlay = overlay_map.pop(live.data_id, None)
 
         if overlay:
-            if overlay.operation_type == 3:  # DELETE
+            # DELETE → hide
+            if overlay.operation_type == 3:
                 continue
+
+            # CREATE or UPDATE → overlay value
             result.append(overlay)
         else:
             result.append(live)
