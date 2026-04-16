@@ -288,7 +288,7 @@ curl -X POST "http://localhost:8000/DESI/work/push" \
 
 ### 1.1 Push Work in Bulk (Create / Update / Delete Multiple Attributes)
 
-Stages multiple changes into the **same session overlay** using a single request.
+Stages **multiple attribute changes** into the same active session overlay using a single request.
 
 Supports **mixed CREATE, UPDATE, and DELETE** operations.
 
@@ -326,9 +326,9 @@ curl -X POST "http://localhost:8000/DESI/work/push/bulk" \
 
 *   Mixed CREATE / UPDATE / DELETE allowed
 *   Items are validated independently
-*   Successful items are staged
-*   Failed items are reported with reasons
-*   Overlay is **not** committed until `/work/save`
+*   Successful items staged
+*   Failed items reported with reasons
+*   Overlay is **not committed** until `/work/save`
 
 ✅ **Response (Partial Success Example)**
 
@@ -345,42 +345,25 @@ curl -X POST "http://localhost:8000/DESI/work/push/bulk" \
 }
 ```
 
-✅ **Response Semantics**
-
-| Field     | Description                                  |
-| --------- | -------------------------------------------- |
-| `status`  | `success` \| `partial_success` \| `failure`  |
-| `success` | List of `data_id` values successfully staged |
-| `failure` | List of failed items with reason             |
-
 ***
 
 ### 2. Get Current Work (Live ⊕ Overlay)
 
-Returns the **merged current state**:
+Returns the **merged working state** (live data overridden by overlay).
 
 ```bash
 curl "http://localhost:8000/DESI/work"
 ```
 
-Overlay changes **override live data automatically**.
-
 ***
 
 ### 3. Save Work (Commit)
 
-Applies all staged changes:
+Applies all staged changes atomically.
 
 ```bash
 curl -X POST "http://localhost:8000/DESI/work/save"
 ```
-
-✅ Effects:
-
-*   Overlay → Live
-*   Overlay → History
-*   Overlay cleared
-*   Session closed
 
 ✅ **Response**
 
@@ -395,17 +378,11 @@ curl -X POST "http://localhost:8000/DESI/work/save"
 
 ### 4. Discard Work
 
-Throws away all staged changes:
+Discards all staged changes.
 
 ```bash
 curl -X POST "http://localhost:8000/DESI/work/discard"
 ```
-
-✅ Effects:
-
-*   Overlay cleared
-*   Live untouched
-*   Session closed
 
 ✅ **Response**
 
@@ -413,6 +390,52 @@ curl -X POST "http://localhost:8000/DESI/work/discard"
 {
   "status": "discarded",
   "session_id": 10001
+}
+```
+
+***
+
+## Search API
+
+### Search Live or Working Data (Including `value` JSON)
+
+```bash
+curl -X POST "http://localhost:8000/DESI/search" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "mode": "working",
+    "filter": {
+      "and": [
+        { "field": "node_id", "op": "=", "value": 10 },
+        { "field": "value.pressure", "op": ">", "value": 20 }
+      ]
+    },
+    "limit": 20
+  }'
+```
+
+✅ **Search Capabilities**
+
+*   Logical operators: `and`, `or`, `not`
+*   Comparison filters on standard columns
+*   JSON path search (`value.key`)
+*   JSON containment and key existence
+*   Working (Live ⊕ Overlay) or Live‑only modes
+*   Pagination (`limit`, `offset`)
+
+✅ **Response**
+
+```json
+{
+  "total": 2,
+  "items": [
+    {
+      "data_id": 5001,
+      "node_id": 10,
+      "attribute_id": 3,
+      "value": { "pressure": 25 }
+    }
+  ]
 }
 ```
 
@@ -457,7 +480,7 @@ HTTP 409
 *   Add RBAC / permissions
 *   Add Snowflake ID generator
 *   Add Alembic migrations
-*   Add search / query APIs
+*   Add search history endpoint
 
 ***
 
