@@ -42,16 +42,6 @@ SearchNode = Union[
     SearchNot,
 ]
 
-
-# ---------------------------------------------------------
-# Text search
-# ---------------------------------------------------------
-
-class TextSearch(BaseModel):
-    fields: List[str]
-    query: str
-
-
 # ---------------------------------------------------------
 # Final request
 # ---------------------------------------------------------
@@ -59,6 +49,10 @@ class TextSearch(BaseModel):
 class SearchRequest(BaseModel):
     mode: Literal["live", "working"] = "live"
     filter: Optional[SearchNode] = None
-    text: Optional[TextSearch] = None
     limit: int = 50
     offset: int = 0
+
+
+SearchAnd.model_rebuild()
+SearchOr.model_rebuild()
+SearchNot.model_rebuild()

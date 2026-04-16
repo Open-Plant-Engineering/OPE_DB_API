@@ -8,5 +8,5 @@ class WorkPushRequest(BaseModel):
     operation_type: int        # 1 = CREATE, 2 = UPDATE, 3 = DELETE
     value: Optional[Dict]      # None only allowed for DELETE
 
-class WorkPushRequest(BaseModel):
+class BulkWorkPushRequest(BaseModel):
     items: List[WorkPushRequest]

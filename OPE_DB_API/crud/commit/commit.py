@@ -38,6 +38,13 @@ def commit_session(
     for o in overlay_rows:
         live = get_live_row(db, domain, o.data_id)
 
+        # Guard: UPDATE / DELETE must have existing live row
+        if o.operation_type in (2, 3) and live is None:
+            raise ValueError(
+                f"Cannot apply operation {o.operation_type} "
+                f"because live row does not exist for data_id={o.data_id}"
+            )
+
         if o.operation_type == 1:  # CREATE
             insert_live_row(
                 db,

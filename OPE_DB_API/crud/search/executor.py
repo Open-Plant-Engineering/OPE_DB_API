@@ -6,6 +6,7 @@ from OPE_DB_API.registry import (
 )
 from OPE_DB_API.crud.session import get_active_session
 from OPE_DB_API.crud.search.compiler import compile_search
+from OPE_DB_API.crud.search.python_eval import eval_search_node
 
 def execute_live_search(
     db: Session,
@@ -86,8 +87,7 @@ def execute_working_search(
 
     # Apply filtering manually (Python-side)
     if search.filter:
-        condition = compile_search(Live, domain, search.filter)
-        rows = [r for r in rows if condition.compare(r)]
+        rows = [r for r in rows if eval_search_node(r, search.filter)]
 
     total = len(rows)
 
