@@ -15,7 +15,7 @@ class DbDataOverlayBase(Base):
 
     __abstract__ = True
 
-    overlay_id = Column(
+    data_id = Column(
         BigInteger,
         primary_key=True,
         nullable=False,
