@@ -6,6 +6,12 @@ These models define the semantic roles of data in the system:
 - overlay (draft) data
 - history (audit) data
 - session metadata
+
+IDENTITY RULE:
+- data_id uniquely identifies a single attribute globally
+- DbDataOverlayBase shadows DbDataBase by data_id
+- DbDataHistoryBase records mutations by data_id
+- There is no separate overlay identity
 """
 
 from .db_data import DbDataBase

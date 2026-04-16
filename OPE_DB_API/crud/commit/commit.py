@@ -66,7 +66,7 @@ def commit_session(
         # -------------------------------------------------
 
         for overlay in overlay_rows:
-            data_id = overlay.overlay_id
+            data_id = overlay.data_id
             new_value = overlay.value
 
             live_row = get_live_row(db, domain, data_id)

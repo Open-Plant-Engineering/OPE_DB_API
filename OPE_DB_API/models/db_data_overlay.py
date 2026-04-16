@@ -38,7 +38,12 @@ class DbDataOverlayBase(Base):
         Integer,
         nullable=False,
     )
-
+    
+    operation_type = Column(
+        Integer, 
+        nullable=False
+    )  # 1=C,2=U,3=D
+    
     value = Column(
         JSONB,
         nullable=True,
