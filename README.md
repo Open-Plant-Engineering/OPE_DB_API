@@ -72,67 +72,71 @@ initdb -D ~/pgdata
 
 It is designed for **engineering‑scale systems** where:
 
-*   Each row represents **one attribute**
-*   Users work inside **explicit sessions**
-*   Changes are staged in a **draft overlay**
-*   Final changes are **committed atomically**
-*   Full **history/audit trail** is maintained
+- Each row represents **one attribute**
+- Users work inside **explicit sessions**
+- Changes are staged in a **draft overlay**
+- Final changes are **committed atomically**
+- Full **history / audit trail** is maintained
 
 This API follows an **intent → commit** model rather than traditional CRUD.
 
-***
+---
 
 ## Core Concepts
 
 ### 1. Attribute Identity
 
-*   `data_id` uniquely identifies **one attribute globally**
-*   Same `data_id` is used in:
-    *   Live data
-    *   Overlay draft
-    *   History
+- `data_id` uniquely identifies **one attribute globally**
+- Same `data_id` is used in:
+  - Live data
+  - Overlay draft
+  - History
 
 ### 2. Session
 
-*   All modifications happen inside an **active session**
-*   A session owns all staged changes
-*   Sessions may be **saved** or **discarded**
+- All modifications happen inside an **active session**
+- A session owns all staged changes
+- Sessions may be **saved** or **discarded**
 
 ### 3. Overlay (Draft)
 
-*   Overlay is a **bucket of intent**
-*   Contains uncommitted changes only
-*   One row per `(data_id, session)`
-*   Cleared automatically on save or discard
+- Overlay is a **bucket of intent**
+- Contains uncommitted changes only
+- One row per `(data_id, session)`
+- Cleared automatically on save or discard
 
 ### 4. Commit
 
-*   Save applies:
-    *   Overlay → Live table
-    *   Overlay → History table
-*   Operation is **atomic**
-*   Overlay is cleared
-*   Session is closed
+- Save applies:
+  - Overlay → Live table
+  - Overlay → History table
+- Operation is **atomic**
+- Overlay is cleared
+- Session is closed
 
-***
+---
 
 ## Architecture Overview
 
-    Client
-      │
-      ▼
-    Session
-      │
-      ▼
-    Overlay (Draft / Intent)
-      │
-      ▼
-    Save
-      │
-      ├── Live Data (current state)
-      └── History (audit trail)
+```
 
-***
+Client
+│
+▼
+Session
+│
+▼
+Overlay (Draft / Intent)
+│
+▼
+Save
+│
+├── Live Data (current state)
+└── History (audit trail)
+
+````
+
+---
 
 ## PostgreSQL Setup
 
@@ -140,9 +144,9 @@ This API follows an **intent → commit** model rather than traditional CRUD.
 
 Each domain defines three tables:
 
-*   `<domain>_data` (live)
-*   `<domain>_data_overlay` (draft)
-*   `<domain>_data_history` (audit)
+- `<domain>_data` (live)
+- `<domain>_data_overlay` (draft)
+- `<domain>_data_history` (audit)
 
 Example (DESI domain):
 
@@ -171,7 +175,7 @@ CREATE TABLE desi_data_history (
     old_value      JSONB,
     new_value      JSONB
 );
-```
+````
 
 ***
 
@@ -282,6 +286,75 @@ curl -X POST "http://localhost:8000/DESI/work/push" \
 
 ***
 
+### 1.1 Push Work in Bulk (Create / Update / Delete Multiple Attributes)
+
+Stages multiple changes into the **same session overlay** using a single request.
+
+Supports **mixed CREATE, UPDATE, and DELETE** operations.
+
+```bash
+curl -X POST "http://localhost:8000/DESI/work/push/bulk" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "items": [
+      {
+        "data_id": null,
+        "node_id": 100,
+        "attribute_id": 1,
+        "operation_type": 1,
+        "value": { "length": 120 }
+      },
+      {
+        "data_id": 5005,
+        "node_id": 100,
+        "attribute_id": 2,
+        "operation_type": 2,
+        "value": { "diameter": 40 }
+      },
+      {
+        "data_id": 9999,
+        "node_id": 100,
+        "attribute_id": 3,
+        "operation_type": 3,
+        "value": null
+      }
+    ]
+  }'
+```
+
+✅ **Behavior**
+
+*   Mixed CREATE / UPDATE / DELETE allowed
+*   Items are validated independently
+*   Successful items are staged
+*   Failed items are reported with reasons
+*   Overlay is **not** committed until `/work/save`
+
+✅ **Response (Partial Success Example)**
+
+```json
+{
+  "status": "partial_success",
+  "success": [7001, 5005],
+  "failure": [
+    {
+      "data_id": 9999,
+      "reason": "DATA_NOT_FOUND"
+    }
+  ]
+}
+```
+
+✅ **Response Semantics**
+
+| Field     | Description                                  |
+| --------- | -------------------------------------------- |
+| `status`  | `success` \| `partial_success` \| `failure`  |
+| `success` | List of `data_id` values successfully staged |
+| `failure` | List of failed items with reason             |
+
+***
+
 ### 2. Get Current Work (Live ⊕ Overlay)
 
 Returns the **merged current state**:
@@ -362,7 +435,7 @@ HTTP 409
 
 ✅ Single‑writer per attribute  
 ✅ Atomic commits  
-✅ No partial updates  
+✅ Partial success allowed during bulk staging  
 ✅ Full history tracking  
 ✅ Clean rollback via discard
 
@@ -370,7 +443,7 @@ HTTP 409
 
 ## Design Principles
 
-*   Workflow‑first API (not CRUD)
+*   Workflow‑first API (not CRUD), bulk operations reuse the same workflow
 *   Overlay stores **intent**
 *   Live stores **truth**
 *   History stores **proof**
@@ -384,13 +457,10 @@ HTTP 409
 *   Add RBAC / permissions
 *   Add Snowflake ID generator
 *   Add Alembic migrations
-*   Add bulk push API
-*   Add search/query APIs
+*   Add search / query APIs
 
 ***
 
 ## License
 
 Internal / proprietary (adjust as required)
-
-***
