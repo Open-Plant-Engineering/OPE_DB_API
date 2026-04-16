@@ -26,11 +26,10 @@ router = APIRouter(
 @router.post("/push")
 def api_push_work(
     code: str,
-    domain: str,
     payload: WorkPushRequest,
     db: Session = Depends(db_session),
 ):
-    validate_domain(domain)
+    validate_domain(code)
 
     session = get_active_session(db)
     if not session:
@@ -38,7 +37,7 @@ def api_push_work(
 
     row = push_work(
         db=db,
-        domain=domain,
+        domain=code,
         session_id=session.session_id,
         payload=payload,
     )

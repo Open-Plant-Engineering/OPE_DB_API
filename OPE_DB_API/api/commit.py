@@ -6,7 +6,7 @@ from OPE_DB_API.api.helpers import validate_domain
 from OPE_DB_API.crud.commit.commit import commit_session
 
 router = APIRouter(
-    prefix="/{code}/{domain}/commit",
+    prefix="/{code}/commit",
     tags=["Commit Operations"],
 )
 
@@ -14,18 +14,17 @@ router = APIRouter(
 @router.post("/{session_id}")
 def api_commit_session(
     code: str,
-    domain: str,
     session_id: int,
     db: Session = Depends(db_session),
 ):
-    validate_domain(domain)
+    validate_domain(code)
     commit_session(
         db,
-        domain=domain,
+        domain=code,
         session_id=session_id,
     )
     return {
         "status": "committed",
         "session_id": session_id,
-        "domain": domain,
+        "domain": code,
     }
