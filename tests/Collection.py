@@ -7,11 +7,15 @@ def collect_py_files(root_dir, output_txt):
                 if filename.endswith(".py"):
                     file_path = os.path.join(foldername, filename)
 
-                    out_file.write(f"{file_path}\n")
+                    # Avoid including the output file itself
+                    if os.path.abspath(file_path) == os.path.abspath(output_txt):
+                        continue
+
+                    out_file.write(f"# FILE: {file_path}\n")
                     out_file.write("-" * 80 + "\n")
 
                     try:
-                        with open(file_path, "r", encoding="utf-8") as py_file:
+                        with open(file_path, "r", encoding="utf-8", errors="replace") as py_file:
                             out_file.write(py_file.read())
                     except Exception as e:
                         out_file.write(f"[Error reading file: {e}]")

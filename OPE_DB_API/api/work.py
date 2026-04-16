@@ -8,10 +8,8 @@ from OPE_DB_API.schemas.work import WorkPushRequest
 from OPE_DB_API.crud.session import get_active_session
 from OPE_DB_API.crud.work.push import push_work
 from OPE_DB_API.crud.commit.commit import commit_session
-from OPE_DB_API.crud.session import get_active_session
 from OPE_DB_API.crud.session.abort import abort_session
 from OPE_DB_API.crud.work.read import read_current_work
-from OPE_DB_API.crud.session import get_active_session
 
 from OPE_DB_API.registry import (
     LIVE_TABLE_REGISTRY,
