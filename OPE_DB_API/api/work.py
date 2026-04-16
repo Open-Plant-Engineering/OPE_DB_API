@@ -10,6 +10,13 @@ from OPE_DB_API.crud.work.push import push_work
 from OPE_DB_API.crud.commit.commit import commit_session
 from OPE_DB_API.crud.session import get_active_session
 from OPE_DB_API.crud.session.abort import abort_session
+from OPE_DB_API.crud.work.read import read_current_work
+from OPE_DB_API.crud.session import get_active_session
+
+from OPE_DB_API.registry import (
+    LIVE_TABLE_REGISTRY,
+    OVERLAY_TABLE_REGISTRY,
+)
 
 router = APIRouter(
     prefix="/work",
@@ -95,3 +102,24 @@ def api_discard_work(
         "session_id": session.session_id,
         "domain": domain,
     }
+
+
+@router.get("")
+def api_get_current_work(
+    code: str,
+    domain: str,
+    db: Session = Depends(db_session),
+):
+    validate_domain(domain)
+
+    session = get_active_session(db)
+    if not session:
+        # no active session → show latest committed state
+        Live = LIVE_TABLE_REGISTRY[domain]
+        return db.query(Live).all()
+
+    return read_current_work(
+        db,
+        domain=domain,
+        session_id=session.session_id,
+    )
