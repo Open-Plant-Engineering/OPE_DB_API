@@ -16,8 +16,8 @@ class DbDataHistoryBase(Base):
 
     history_id = Column(
         BigInteger,
-        Sequence("history_id_seq"),
         primary_key=True,
+        server_default=Sequence("history_id_seq").next_value(),
         doc="Externally generated (e.g. Snowflake) ID",
     )
 
