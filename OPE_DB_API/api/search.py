@@ -7,7 +7,7 @@ from OPE_DB_API.schemas.search import SearchRequest
 from OPE_DB_API.crud.search.executor import execute_search
 
 router = APIRouter(
-    prefix="/{code}/search",
+    prefix="/{code}/{domain}/search",
     tags=["Search"],
 )
 

@@ -3,8 +3,7 @@ from sqlalchemy.orm import Session
 
 from OPE_DB_API.api.dependencies import db_session
 from OPE_DB_API.api.helpers import validate_domain
-from OPE_DB_API.schemas.work import WorkPushRequest
-from OPE_DB_API.schemas.work import BulkWorkPushRequest
+from OPE_DB_API.schemas.work import WorkPushRequest, BulkWorkPushRequest
 
 from OPE_DB_API.crud.session import get_active_session
 from OPE_DB_API.crud.work.push import push_work
@@ -16,7 +15,7 @@ from OPE_DB_API.crud.work.push_bulk import push_work_bulk
 from OPE_DB_API.registry import LIVE_TABLE_REGISTRY
 
 router = APIRouter(
-    prefix="/work",
+    prefix="/{code}/{domain}/work",
     tags=["Workflows"],
 )
 
@@ -26,10 +25,11 @@ router = APIRouter(
 @router.post("/push")
 def api_push_work(
     code: str,
+    domain: str,
     payload: WorkPushRequest,
     db: Session = Depends(db_session),
 ):
-    validate_domain(code)
+    validate_domain(domain)
 
     session = get_active_session(db)
     if not session:
@@ -37,7 +37,7 @@ def api_push_work(
 
     row = push_work(
         db=db,
-        domain=code,
+        domain=domain,                      # ✅ FIXED
         session_id=session.session_id,
         payload=payload,
     )
@@ -118,7 +118,6 @@ def api_get_current_work(
 
     session = get_active_session(db)
     if not session:
-        # No active session → return latest committed state
         Live = LIVE_TABLE_REGISTRY[domain]
         return db.query(Live).all()
 
@@ -152,18 +151,14 @@ def api_push_work_bulk(
         items=payload.items,
     )
 
-    # Commit once at the end
     db.commit()
 
-    if success and failure:
-        status = "partial_success"
-    elif success:
-        status = "success"
-    else:
-        status = "failure"
-
     return {
-        "status": status,
+        "status": (
+            "partial_success" if success and failure
+            else "success" if success
+            else "failure"
+        ),
         "success": success,
         "failure": failure,
     }
