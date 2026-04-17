@@ -89,13 +89,13 @@ def api_discard_work(
 
     validate_session_active(db, session_id=session_id)
 
-    with db.begin():
-        abort_session(
-            db=db,
-            session_id=session_id,
-            domain=domain,
-        )
+    abort_session(
+        db=db,
+        session_id=session_id,
+        domain=domain,
+    )
 
+    db.commit()
     return {
         "status": "discarded",
         "session_id": session_id,

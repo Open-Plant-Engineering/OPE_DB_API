@@ -214,7 +214,7 @@ Most endpoints include a `{code}` path parameter, representing a project or data
 
 Example:
 
-    /DESI/work/push
+    XYZ/DESI/work/<session_id>/push
 
 ***
 
@@ -263,7 +263,7 @@ curl -X POST \
 Stages a change into the session overlay.
 
 ```bash
-curl -X POST "http://localhost:8000/XYZ/DESI/work/push" \
+curl -X POST "http://localhost:8000/XYZ/DESI/1234/work/push" \
   -H "Content-Type: application/json" \
   -d '{
     "data_id": 5001,
@@ -273,6 +273,7 @@ curl -X POST "http://localhost:8000/XYZ/DESI/work/push" \
     "value": { "pressure": 15 }
   }'
 ```
+*Value* can be of any datatype.
 
 ✅ **operation\_type**
 
