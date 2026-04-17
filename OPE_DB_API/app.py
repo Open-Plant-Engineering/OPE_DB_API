@@ -3,7 +3,6 @@ from fastapi import FastAPI
 from OPE_DB_API.api import (
     session_router,
     work_router,
-    commit_router,
     search_router,
 )
 
@@ -24,7 +23,6 @@ def create_app() -> FastAPI:
     
     app.include_router(session_router)
     app.include_router(work_router)
-    app.include_router(commit_router)
     app.include_router(search_router)
 
     return app

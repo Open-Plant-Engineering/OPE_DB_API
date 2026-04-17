@@ -42,6 +42,7 @@ def api_push_work(
     )
 
     db.commit()
+
     return {
         "status": "staged",
         "data_id": row.data_id,
@@ -51,8 +52,8 @@ def api_push_work(
 # ---------------------------------------------------------
 # SAVE (Commit work)
 # ---------------------------------------------------------
-@router.post("/save")
-def api_save_work(
+@router.post("/commit")
+def api_commit_work(
     code: str,
     domain: str,
     session_id: int,
@@ -62,12 +63,13 @@ def api_save_work(
 
     validate_session_active(db, session_id=session_id)
 
-    with db.begin():
-        commit_session(
-            db=db,
-            domain=domain,
-            session_id=session_id,
-        )
+    commit_session(
+        db=db,
+        domain=domain,
+        session_id=session_id,
+    )
+
+    db.commit()
 
     return {
         "status": "saved",
