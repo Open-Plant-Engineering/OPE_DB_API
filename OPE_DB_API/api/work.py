@@ -33,16 +33,22 @@ def api_push_work(
     validate_domain(domain)
 
     validate_session_active(db, session_id=session_id)
+    try:
+        row = push_work(
+            db=db,
+            domain=domain,
+            session_id=session_id,
+            payload=payload,
+        )
+        db.commit()
 
-    row = push_work(
-        db=db,
-        domain=domain,                      # ✅ FIXED
-        session_id=session_id,
-        payload=payload,
-    )
-
-    db.commit()
-
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
+        
     return {
         "status": "staged",
         "data_id": row.data_id,
@@ -62,14 +68,21 @@ def api_commit_work(
     validate_domain(domain)
 
     validate_session_active(db, session_id=session_id)
+    
+    try:
+        commit_session(
+            db=db,
+            domain=domain,
+            session_id=session_id,
+        )
+        db.commit()
 
-    commit_session(
-        db=db,
-        domain=domain,
-        session_id=session_id,
-    )
-
-    db.commit()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
 
     return {
         "status": "saved",
@@ -90,14 +103,21 @@ def api_discard_work(
     validate_domain(domain)
 
     validate_session_active(db, session_id=session_id)
-
-    abort_session(
-        db=db,
-        session_id=session_id,
-        domain=domain,
-    )
-
-    db.commit()
+    try:
+        abort_session(
+            db=db,
+            session_id=session_id,
+            domain=domain,
+        )
+        db.commit()
+        
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
+        
     return {
         "status": "discarded",
         "session_id": session_id,
@@ -117,7 +137,7 @@ def api_get_current_work(
     validate_domain(domain)
 
     validate_session_active(db, session_id=session_id)
-
+    
     return read_current_work(
         db=db,
         domain=domain,
