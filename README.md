@@ -389,7 +389,7 @@ curl -X POST "http://localhost:8000/XYZ/DESI/work/save"
 Discards all staged changes.
 
 ```bash
-curl -X POST "http://localhost:8000/XYZ/DESI/work/discard"
+curl -X POST "http://localhost:8000/XYZ/DESI/<session_id>/work/discard"
 ```
 
 ✅ **Response**
