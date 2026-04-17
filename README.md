@@ -224,7 +224,7 @@ Example:
 
 ```bash
 curl -X POST \
-  "http://localhost:8000/DESI/session/start?session_id=10001&username=john"
+  "http://localhost:8000/XYZ/session/start?session_id=10001&username=john"
 ```
 
 ✅ **Response**
@@ -242,7 +242,7 @@ curl -X POST \
 ### Get Active Session
 
 ```bash
-curl "http://localhost:8000/DESI/session/active"
+curl "http://localhost:8000/XYZ/session/active"
 ```
 
 ***
@@ -251,7 +251,7 @@ curl "http://localhost:8000/DESI/session/active"
 
 ```bash
 curl -X POST \
-  "http://localhost:8000/DESI/session/10001/close"
+  "http://localhost:8000/XYZ/session/10001/close"
 ```
 
 ***
@@ -263,7 +263,7 @@ curl -X POST \
 Stages a change into the session overlay.
 
 ```bash
-curl -X POST "http://localhost:8000/DESI/work/push" \
+curl -X POST "http://localhost:8000/XYZ/DESI/work/push" \
   -H "Content-Type: application/json" \
   -d '{
     "data_id": 5001,
@@ -300,7 +300,7 @@ Stages **multiple attribute changes** into the same active session overlay using
 Supports **mixed CREATE, UPDATE, and DELETE** operations.
 
 ```bash
-curl -X POST "http://localhost:8000/DESI/work/push/bulk" \
+curl -X POST "http://localhost:8000/XYZ/DESI/work/push/bulk" \
   -H "Content-Type: application/json" \
   -d '{
     "items": [
@@ -359,7 +359,7 @@ curl -X POST "http://localhost:8000/DESI/work/push/bulk" \
 Returns the **merged working state** (live data overridden by overlay).
 
 ```bash
-curl "http://localhost:8000/DESI/work"
+curl "http://localhost:8000/XYZ/DESI/work"
 ```
 
 ***
@@ -369,7 +369,7 @@ curl "http://localhost:8000/DESI/work"
 Applies all staged changes atomically.
 
 ```bash
-curl -X POST "http://localhost:8000/DESI/work/save"
+curl -X POST "http://localhost:8000/XYZ/DESI/work/save"
 ```
 
 ✅ **Response**
@@ -388,7 +388,7 @@ curl -X POST "http://localhost:8000/DESI/work/save"
 Discards all staged changes.
 
 ```bash
-curl -X POST "http://localhost:8000/DESI/work/discard"
+curl -X POST "http://localhost:8000/XYZ/DESI/work/discard"
 ```
 
 ✅ **Response**
@@ -407,7 +407,7 @@ curl -X POST "http://localhost:8000/DESI/work/discard"
 ### Search Live or Working Data (Including `value` JSON)
 
 ```bash
-curl -X POST "http://localhost:8000/DESI/search" \
+curl -X POST "http://localhost:8000/XYZ/DESI/search" \
   -H "Content-Type: application/json" \
   -d '{
     "mode": "working",
