@@ -36,7 +36,3 @@ class DbDataBase(Base):
         JSONB,
         nullable=False,
     )
-
-    __table_args__ = (
-        UniqueConstraint("node_id", "attribute_id", name="uq_node_attribute"),
-    )

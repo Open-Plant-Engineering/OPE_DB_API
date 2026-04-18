@@ -1,3 +1,5 @@
+from sqlalchemy import UniqueConstraint
+
 from OPE_DB_API.models import (
     DbDataBase,
     DbDataOverlayBase,
@@ -7,7 +9,9 @@ from OPE_DB_API.models import (
 
 class ScheData(DbDataBase):
     __tablename__ = "sche_data"
-
+    __table_args__ = (
+        UniqueConstraint("node_id", "attribute_id", name="sche_data_uq_node_attribute"),
+    )
 
 class ScheDataOverlay(DbDataOverlayBase):
     __tablename__ = "sche_data_overlay"
