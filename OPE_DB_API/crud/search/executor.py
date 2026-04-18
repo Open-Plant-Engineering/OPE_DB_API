@@ -107,10 +107,12 @@ def execute_search(
         return execute_working_search(
             db,
             domain=domain,
+            session_id=session_id,
             search=search,
         )
     return execute_live_search(
         db,
         domain=domain,
+        session_id=session_id,
         search=search,
     )

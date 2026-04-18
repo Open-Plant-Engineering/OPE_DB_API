@@ -8,7 +8,7 @@ from OPE_DB_API.db.init_db import init_database
 set_config_file("/workspaces/OPE_DB_API/defaults/config.toml")
 
 # 2. Explicitly create tables (DEV ONLY)
-engine = get_engine("XYZ")  # use your project code
+engine = get_engine("XYZ", True)  # use your project code
 
 init_database(engine)
 

@@ -12,7 +12,7 @@ from OPE_DB_API.config import get_config
 _ENGINES: Dict[str, Engine] = {}
 
 
-def get_engine(code: str) -> Engine:
+def get_engine(code: str, echo:bool = False) -> Engine:
     """
     Return a SQLAlchemy engine for the given project code.
 
@@ -38,6 +38,7 @@ def get_engine(code: str) -> Engine:
         db_url,
         future=True,
         pool_pre_ping=True,
+        echo=echo,
     )
 
     _ENGINES[code] = engine
