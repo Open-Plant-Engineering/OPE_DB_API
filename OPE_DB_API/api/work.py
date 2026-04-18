@@ -33,6 +33,7 @@ def api_push_work(
     validate_domain(domain)
 
     validate_session_active(db, session_id=session_id)
+    
     try:
         row = push_work(
             db=db,
