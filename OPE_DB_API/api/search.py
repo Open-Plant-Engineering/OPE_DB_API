@@ -28,6 +28,7 @@ def api_search(
     result = execute_search(
         db=db,
         domain=domain,
+        session_id=session_id,
         search=payload,
     )
 

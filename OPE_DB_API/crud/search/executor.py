@@ -12,6 +12,7 @@ def execute_live_search(
     db: Session,
     *,
     domain: str,
+    session_id: int,
     search,
 ):
     """
@@ -42,6 +43,7 @@ def execute_working_search(
     db: Session,
     *,
     domain: str,
+    session_id: int,
     search,
 ):
     """
@@ -51,16 +53,10 @@ def execute_working_search(
     Live = LIVE_TABLE_REGISTRY[domain]
     Overlay = OVERLAY_TABLE_REGISTRY[domain]
 
-    # Get active session
-    session = get_active_session(db)
-    if not session:
-        # No active session → behave like live search
-        return execute_live_search(db, domain=domain, search=search)
-
     # Fetch data
     live_rows = db.query(Live).all()
     overlay_rows = db.query(Overlay).filter(
-        Overlay.session_id == session.session_id
+        Overlay.session_id == session_id  # see note below
     ).all()
 
     overlay_map = {o.data_id: o for o in overlay_rows}
@@ -104,6 +100,7 @@ def execute_search(
     db: Session,
     *,
     domain: str,
+    session_id: int,
     search,
 ):
     if search.mode == "working":
