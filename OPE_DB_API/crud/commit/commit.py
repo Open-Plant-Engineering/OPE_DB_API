@@ -35,69 +35,80 @@ def commit_session(
         Overlay.session_id == session_id
     ).all()
 
-    for o in overlay_rows:
+    for o in [x for x in overlay_rows if x.operation_type == 1]: # CREATE 
+        insert_live_row(
+            db,
+            domain,
+            {
+                "data_id": o.data_id,
+                "node_id": o.node_id,
+                "attribute_id": o.attribute_id,
+                "value": o.value,
+            },
+        )
+        write_history(
+            db,
+            domain,
+            {
+                "data_id": o.data_id,
+                "session_id": session_id,
+                "operation_type": 1,
+                "old_value": None,
+                "new_value": o.value,
+            },
+        )
+    
+    db.flush()
+    
+    for o in [x for x in overlay_rows if x.operation_type == 2]: # UPDATE 
         live = get_live_row(db, domain, o.data_id)
-
         # Guard: UPDATE / DELETE must have existing live row
-        if o.operation_type in (2, 3) and live is None:
+        if live is None:
             raise ValueError(
                 f"Cannot apply operation {o.operation_type} "
                 f"because live row does not exist for data_id={o.data_id}"
             )
+        
+        old_value = live.value
+        update_live_row(db, live, o.value)
+        write_history(
+            db,
+            domain,
+            {
+                "data_id": o.data_id,
+                "session_id": session_id,
+                "operation_type": 2,
+                "old_value": old_value,
+                "new_value": o.value,
+            },
+        )
 
-        if o.operation_type == 1:  # CREATE
-            insert_live_row(
-                db,
-                domain,
-                {
-                    "data_id": o.data_id,
-                    "node_id": o.node_id,
-                    "attribute_id": o.attribute_id,
-                    "value": o.value,
-                },
-            )
-            write_history(
-                db,
-                domain,
-                {
-                    "data_id": o.data_id,
-                    "session_id": session_id,
-                    "operation_type": 1,
-                    "old_value": None,
-                    "new_value": o.value,
-                },
-            )
+    db.flush()
 
-        elif o.operation_type == 2:  # UPDATE
-            old_value = live.value
-            update_live_row(db, live, o.value)
-            write_history(
-                db,
-                domain,
-                {
-                    "data_id": o.data_id,
-                    "session_id": session_id,
-                    "operation_type": 2,
-                    "old_value": old_value,
-                    "new_value": o.value,
-                },
+    for o in [x for x in overlay_rows if x.operation_type == 3]: # DELETE 
+        live = get_live_row(db, domain, o.data_id)
+        # Guard: UPDATE / DELETE must have existing live row
+        if live is None:
+            raise ValueError(
+                f"Cannot apply operation {o.operation_type} "
+                f"because live row does not exist for data_id={o.data_id}"
             )
+        old_value = live.value
+        delete_live_row(db, live)
+        write_history(
+            db,
+            domain,
+            {
+                "data_id": o.data_id,
+                "session_id": session_id,
+                "operation_type": 3,
+                "old_value": old_value,
+                "new_value": None,
+            },
+        )
 
-        elif o.operation_type == 3:  # DELETE
-            old_value = live.value
-            delete_live_row(db, live)
-            write_history(
-                db,
-                domain,
-                {
-                    "data_id": o.data_id,
-                    "session_id": session_id,
-                    "operation_type": 3,
-                    "old_value": old_value,
-                    "new_value": None,
-                },
-            )
-
+    db.flush()
+    
     # Clear overlay
     db.query(Overlay).filter(
         Overlay.session_id == session_id
