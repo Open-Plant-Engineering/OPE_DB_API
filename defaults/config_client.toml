@@ -1,6 +1,19 @@
-[server]
-base_url = "http://localhost:8000"
+# Which backend each 3-letter code should use
+[database_map]
+XYZ = "postgres_xyz"
+MNO = "postgres_mno"
 
-[transport]
-timeout_seconds = 30
-batch_size = 5000
+# PostgreSQL groups
+[postgres_xyz]
+user = "postgres"
+password = "postgres"
+host = "localhost"
+port = 5432
+database = "xyz"
+
+[postgres_mno]
+user = "postgres"
+password = "report123"
+host = "localhost"
+port = 5432
+database = "mno"

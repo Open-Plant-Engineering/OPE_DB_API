@@ -7,13 +7,12 @@ Run:
 
 from pprint import pprint
 
-from OPE_DB_API.db.engine import get_engine
+from OPE_DB_API.db.engine import get_client_config
 from OPE_DB_API.db.session import get_db_session
-from OPE_DB_API.cache.bootstrap import bootstrap_local_database
 from OPE_DB_API.cache.engine import CacheEngine
 from OPE_DB_API.registry import LIVE_TABLE_REGISTRY
 import OPE_DB_API.cache.transport as transport
-
+from OPE_DB_API.db.init_db import init_database
 
 # -------------------------------------------------------------------
 # Configuration
@@ -124,8 +123,8 @@ def main():
     print("\n=== LOCAL CACHE MANUAL TEST START ===")
 
     # Step 1: prepare local DB
-    engine = get_engine(CODE)
-    bootstrap_local_database(engine)
+    engine = get_client_config(CODE)
+    init_database(engine)
 
     with get_db_session(CODE) as db:
         engine_cache = CacheEngine(

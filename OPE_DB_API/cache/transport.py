@@ -1,7 +1,6 @@
 import httpx
 from typing import List, Dict, Any, Optional
 
-from OPE_DB_API.config import get_config
 from OPE_DB_API.config.loader import get_client_config
 
 # ---------------------------------------------------------
