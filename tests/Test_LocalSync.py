@@ -7,18 +7,18 @@ Run:
 
 from pprint import pprint
 
-from OPE_DB_API.db.engine import get_client_config
-from OPE_DB_API.db.session import get_db_session
+from OPE_DB_API.db.engine import get_client_engine
+from OPE_DB_API.db.session import get_client_db_session
 from OPE_DB_API.cache.engine import CacheEngine
 from OPE_DB_API.registry import LIVE_TABLE_REGISTRY
-import OPE_DB_API.cache.transport as transport
+from OPE_DB_API.cache.transport import fetch_history_batch, fetch_snapshot_subtree
 from OPE_DB_API.db.init_db import init_database
 
 # -------------------------------------------------------------------
 # Configuration
 # -------------------------------------------------------------------
 
-CODE = "XYZ"
+CODE = "mno"
 DOMAIN = "DESI"
 SESSION_ID = 9999
 ROOT_NODE_ID = 10
@@ -95,10 +95,6 @@ def fake_fetch_snapshot_subtree(
     ]
 
 
-transport.fetch_history_batch = fake_fetch_history_batch
-transport.fetch_snapshot_subtree = fake_fetch_snapshot_subtree
-
-
 # -------------------------------------------------------------------
 # Helper: print live table
 # -------------------------------------------------------------------
@@ -123,10 +119,10 @@ def main():
     print("\n=== LOCAL CACHE MANUAL TEST START ===")
 
     # Step 1: prepare local DB
-    engine = get_client_config(CODE)
+    engine = get_client_engine(CODE, True)
     init_database(engine)
 
-    with get_db_session(CODE) as db:
+    with get_client_db_session(CODE) as db:
         engine_cache = CacheEngine(
             db=db,
             code=CODE,

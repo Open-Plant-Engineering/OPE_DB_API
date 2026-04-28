@@ -11,11 +11,12 @@ No domain or business logic lives here.
 
 from .base import Base
 from .engine import get_engine, get_client_engine
-from .session import get_db_session
+from .session import get_db_session, get_client_db_session
 
 __all__ = [
     "Base",
     "get_engine",
     "get_db_session",
     "get_client_engine",
+    "get_client_db_session",
 ]

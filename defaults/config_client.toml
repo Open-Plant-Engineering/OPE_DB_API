@@ -8,12 +8,14 @@ MNO = "postgres_mno"
 user = "postgres"
 password = "postgres"
 host = "localhost"
-port = 5432
+port = 5433
 database = "xyz"
+api_url = "http://127.0.0.1:8000"
 
 [postgres_mno]
 user = "postgres"
-password = "report123"
+password = "postgres"
 host = "localhost"
-port = 5432
+port = 5433
 database = "mno"
+api_url = "http://127.0.0.1:8000"

@@ -7,12 +7,12 @@ from OPE_DB_API.config.loader import get_client_config
 # Internal helpers
 # ---------------------------------------------------------
 
-def _get_base_url() -> str:
+def _get_base_url(code: str) -> str:
     """
     Resolve server base URL from config.
     """
     config = get_client_config()
-    return config.get("server", {}).get("base_url", "http://localhost:8000")
+    return config[config["database_map"][code.upper()]]["api_url"]
 
 
 def _build_url(
@@ -21,7 +21,7 @@ def _build_url(
     session_id: int,
     path: str,
 ) -> str:
-    base_url = _get_base_url()
+    base_url = _get_base_url(code)
     return f"{base_url}/{code}/{domain}/{session_id}/sync{path}"
 
 
