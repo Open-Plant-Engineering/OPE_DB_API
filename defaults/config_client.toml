@@ -1,0 +1,6 @@
+[server]
+base_url = "http://localhost:8000"
+
+[transport]
+timeout_seconds = 30
+batch_size = 5000

@@ -2,7 +2,7 @@ import httpx
 from typing import List, Dict, Any, Optional
 
 from OPE_DB_API.config import get_config
-
+from OPE_DB_API.config.loader import get_client_config
 
 # ---------------------------------------------------------
 # Internal helpers
@@ -12,7 +12,7 @@ def _get_base_url() -> str:
     """
     Resolve server base URL from config.
     """
-    config = get_config()
+    config = get_client_config()
     return config.get("server", {}).get("base_url", "http://localhost:8000")
 
 
