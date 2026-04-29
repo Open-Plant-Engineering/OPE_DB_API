@@ -39,6 +39,7 @@ def api_start_session(
 @router.get("/active")
 def api_get_active_session(
     code: str,
+    domain: str,
     username: str | None = Query(default=None),
     hostname: str | None = Query(default=None),
     db: Session = Depends(db_session),
@@ -53,6 +54,7 @@ def api_get_active_session(
 @router.get("")
 def api_list_sessions(
     code: str,
+    domain: str,
     username: str | None = None,
     hostname: str | None = None,
     active_only: bool = False,
@@ -69,6 +71,7 @@ def api_list_sessions(
 @router.post("/{session_id}/close")
 def api_close_session(
     code: str,
+    domain: str,
     session_id: int,
     db: Session = Depends(db_session),
 ):
