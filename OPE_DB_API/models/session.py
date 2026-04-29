@@ -20,6 +20,8 @@ class SessionMetadata(Base):
         doc="Externally generated (e.g. Snowflake) ID",
     )
 
+    domain = Column(String, primary_key=True)
+
     username = Column(
         String,
         nullable=True,

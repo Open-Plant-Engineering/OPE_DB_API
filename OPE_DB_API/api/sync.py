@@ -24,8 +24,8 @@ def api_sync_history(
     code: str,
     domain: str,
     session_id: int,
-    after_history_id: Optional[int] = Query(default=None),
-    limit: int = Query(default=5000),
+    after_history_id: Optional[int] = Query(default=0),
+    limit: Optional[int] = Query(default=5000),
     db: Session = Depends(db_session),
 ):
     """

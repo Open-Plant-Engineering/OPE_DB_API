@@ -29,7 +29,6 @@ def _get_session_factory(code: str) -> sessionmaker:
     _SESSION_FACTORIES[code] = factory
     return factory
 
-@contextmanager
 def get_db_session(code: str) -> Generator[Session, None, None]:
     """
     FastAPI-compatible database session dependency.

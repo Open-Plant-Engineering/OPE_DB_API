@@ -18,10 +18,10 @@ from OPE_DB_API.db.init_db import init_database
 # Configuration
 # -------------------------------------------------------------------
 
-CODE = "mno"
-DOMAIN = "DESI"
-SESSION_ID = 9999
-ROOT_NODE_ID = 10
+CODE = "xyz"
+DOMAIN = "DICT"
+SESSION_ID = 324862074658566144
+ROOT_NODE_ID = 324854822388183040
 
 
 # -------------------------------------------------------------------

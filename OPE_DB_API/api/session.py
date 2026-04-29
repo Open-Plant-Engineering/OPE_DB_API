@@ -10,7 +10,7 @@ from OPE_DB_API.crud.session import (
 )
 
 router = APIRouter(
-    prefix="/{code}/session",
+    prefix="/{code}/{domain}/session",
     tags=["Session Management"],
 )
 
@@ -18,6 +18,7 @@ router = APIRouter(
 @router.post("/start")
 def api_start_session(
     code: str,
+    domain: str,
     session_id: int,
     username: str | None = None,
     hostname: str | None = None,
@@ -28,6 +29,7 @@ def api_start_session(
         session_id=session_id,
         username=username,
         hostname=hostname,
+        domain=domain,
     )
     db.commit()
     db.refresh(ses)

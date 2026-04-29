@@ -4,6 +4,7 @@ from OPE_DB_API.api import (
     session_router,
     work_router,
     search_router,
+    sync_router
 )
 
 
@@ -24,5 +25,6 @@ def create_app() -> FastAPI:
     app.include_router(session_router)
     app.include_router(work_router)
     app.include_router(search_router)
+    app.include_router(sync_router)
 
     return app

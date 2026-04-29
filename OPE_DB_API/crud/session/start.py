@@ -8,6 +8,7 @@ def start_session(
     session_id: int,
     username: str | None = None,
     hostname: str | None = None,
+    domain: str | None = None,
 ):
     """
     Start a new session.
@@ -20,6 +21,7 @@ def start_session(
         username=username,
         hostname=hostname,
         active=True,
+        domain=domain,
     )
 
     db.add(session)
