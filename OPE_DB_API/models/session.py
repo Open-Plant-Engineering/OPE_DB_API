@@ -54,5 +54,4 @@ class SessionMetadata(Base):
     )
 
     # ✅ Client-side cache sync metadata (safe on server too)
-    last_history_id = Column(BigInteger, nullable=True)
     last_synced_at = Column(DateTime, nullable=True)

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from typing import Optional
+from datetime import datetime
 
 from OPE_DB_API.api.dependencies import db_session
 from OPE_DB_API.api.helpers import validate_domain
@@ -24,7 +25,7 @@ def api_sync_history(
     code: str,
     domain: str,
     session_id: int,
-    after_history_id: Optional[int] = Query(default=0),
+    after_ts: datetime,
     limit: Optional[int] = Query(default=5000),
     db: Session = Depends(db_session),
 ):
@@ -37,7 +38,7 @@ def api_sync_history(
     rows = fetch_history_after(
         db=db,
         domain=domain,
-        after_history_id=after_history_id,
+        after_ts=after_ts,
         limit=limit,
     )
     return rows
