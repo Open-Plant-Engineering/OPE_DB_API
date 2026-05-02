@@ -53,6 +53,7 @@ def api_sync_snapshot(
     domain: str,
     session_id: int,
     root_node_id: int,
+    owner_attribute_id: int,
     db: Session = Depends(db_session),
 ):
     """
@@ -65,5 +66,6 @@ def api_sync_snapshot(
         db=db,
         domain=domain,
         root_node_id=root_node_id,
+        owner_attribute_id=owner_attribute_id,
     )
     return rows
