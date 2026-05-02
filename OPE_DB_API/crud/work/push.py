@@ -26,22 +26,40 @@ def push_work(
             Overlay.session_id == session_id,
         ).one_or_none()
 
+    # -------------------------
+    # CREATE stays CREATE
+    # -------------------------
+    if row and row.operation_type == 1:
+        if payload.operation_type == 3:
+            row.operation_type = 3
+            row.value = None
+        else:
+            row.value = payload.value
+        return row
+
+    # -------------------------
+    # UPDATE or DELETE on UPDATE
+    # -------------------------
     if row:
-        # UPDATE existing bucket entry
-        row.node_id = payload.node_id
-        row.attribute_id = payload.attribute_id
-        row.operation_type = payload.operation_type
-        row.value = payload.value
-    else:
-        # CREATE new bucket entry
-        row = Overlay(
-            data_id=payload.data_id,
-            session_id=session_id,
-            node_id=payload.node_id,
-            attribute_id=payload.attribute_id,
-            operation_type=payload.operation_type,
-            value=payload.value,
-        )
-        db.add(row)
+        if payload.operation_type == 3:
+            row.operation_type = 3
+            row.value = None
+        else:
+            row.operation_type = 2
+            row.value = payload.value
+        return row
+
+    # -------------------------
+    # New overlay entry
+    # -------------------------
+    row = Overlay(
+        data_id=payload.data_id,
+        session_id=session_id,
+        node_id=payload.node_id,
+        attribute_id=payload.attribute_id,
+        operation_type=payload.operation_type,
+        value=payload.value,
+    )
+    db.add(row)
 
     return row
