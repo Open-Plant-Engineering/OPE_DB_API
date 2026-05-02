@@ -27,6 +27,7 @@ def fetch_history_after(
             history_model.new_value,
             live_model.attribute_id,
             live_model.node_id,
+            SessionMetadata.ended_at,
         )
         .outerjoin(
             live_model,
@@ -57,6 +58,7 @@ def fetch_history_after(
             "attribute_id": r.attribute_id,
             "operation_type": r.operation_type,
             "new_value": r.new_value,
+            "committed_at": r.ended_at
         }
         for r in rows
     ]
