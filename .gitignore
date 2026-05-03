@@ -419,3 +419,5 @@ FodyWeavers.xsd
 
 # Ignors for the project
 *-env/
+.venv/
+.idea/
