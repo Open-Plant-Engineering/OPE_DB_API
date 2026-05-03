@@ -30,10 +30,7 @@ def test_create_document_success():
     repo = InMemoryDocumentRepository()
     service = DocumentService(repo)
 
-    doc = service.create_document(
-        name="Test Doc",
-        payload={"a": 1}
-    )
+    doc = service.create_document(name="Test Doc", payload={"a": 1})
 
     assert doc.name == "Test Doc"
     assert doc.payload["a"] == 1

@@ -28,5 +28,5 @@ include = ["ope_db_api*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = ["E402"]

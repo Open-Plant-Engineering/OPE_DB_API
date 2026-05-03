@@ -12,11 +12,7 @@ class DocumentService:
     def __init__(self, repository: DocumentRepository):
         self._repository = repository
 
-    def create_document(
-        self,
-        name: str,
-        payload: Dict[str, Any]
-    ) -> Document:
+    def create_document(self, name: str, payload: Dict[str, Any]) -> Document:
         if not name:
             raise InvalidDocumentError("Document name cannot be empty")
 

@@ -8,6 +8,7 @@ class DocumentId:
     """
     Value object representing a document identifier.
     """
+
     value: UUID
 
     @staticmethod
@@ -20,6 +21,7 @@ class Document:
     """
     Aggregate root representing a JSONB document.
     """
+
     id: DocumentId
     name: str
     payload: Dict[str, Any]
