@@ -27,7 +27,7 @@ jobs:
           pip install ruff black
 
       - name: Lint
-        run: ruff src tests
+        run: ruff check src tests
 
       - name: Format check
-        run: black --check src tests
+        run: ruff format --check src tests
