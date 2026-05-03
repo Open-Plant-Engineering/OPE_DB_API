@@ -1,3 +1,5 @@
+![CI](https://github.com/Open-Plant-Engineering/OPE_DB_API/actions/workflows/ci.yml/badge.svg)
+
 # OPE_DB_API
 Core backend API service for Open Plant Engineering, acting as the backbone of the platform and providing PostgreSQL-backed data access for all engineering workflows.
 
