@@ -6,7 +6,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 SRC_PATH = PROJECT_ROOT / "src"
 sys.path.insert(0, str(SRC_PATH))
 
-from ope_core.domain.services import DocumentService
+from ope_core.domain.error import DocumentService
 from ope_core.domain.repositories import DocumentRepository
 from ope_core.domain.exceptions import InvalidDocumentError
 from ope_core.domain.models import Document
