@@ -15,7 +15,10 @@ from typing import Protocol
 from ope_core.domain.history import HistoryBatch
 from ope_core.domain.session import SessionState
 from ope_core.domain.cursor import ReplicationCursor
-
+from ope_core.domain.errors import (
+    InactiveSessionError,
+    SnapshotRequiredError,
+)
 
 class HistoryApplier(Protocol):
     """
@@ -66,11 +69,13 @@ def apply_history(
     """
 
     if not session.active:
-        raise ValueError("Cannot apply history in inactive session")
+        raise InactiveSessionError(
+            "Cannot apply history in inactive session"
+        )
 
     if current_cursor.position is None:
-        raise ValueError(
-            "Cannot apply history before snapshot has been applied"
+        raise SnapshotRequiredError(
+            "Snapshot must be applied before history"
         )
 
     # Step 1: Apply history changes to replica

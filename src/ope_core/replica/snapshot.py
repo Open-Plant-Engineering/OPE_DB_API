@@ -16,7 +16,7 @@ from typing import Protocol
 from ope_core.domain.snapshot import Snapshot
 from ope_core.domain.session import SessionState
 from ope_core.domain.cursor import ReplicationCursor
-
+from ope_core.domain.errors import InactiveSessionError
 
 class SnapshotApplier(Protocol):
     """
@@ -69,7 +69,9 @@ def apply_snapshot(
     """
 
     if not session.active:
-        raise ValueError("Cannot apply snapshot in inactive session")
+        raise InactiveSessionError(
+            "Cannot apply snapshot in inactive session"
+        )
 
     # Step 1: Reset replica state
     applier.reset_replica()
