@@ -24,7 +24,7 @@ def collect_py_files(root_dir, output_txt):
 
 
 if __name__ == "__main__":
-    directory_to_scan = r"C:\SKRepo\OPE_DB_API"
+    directory_to_scan = r"C:\SKRepo\OPE_DB_API\OPE_DB_API"
     output_file = "all_python_code.txt"
 
     collect_py_files(directory_to_scan, output_file)

@@ -1,11 +1,10 @@
 """
-OPE Core Platform Package
+ope_core
 
-This package contains the core domain, replication, server, and
-infrastructure logic for the OPE DB system.
+Core engine for OPE DB API.
 
-This is a platform package intended to be depended upon by
-other projects (API servers, clients, tools).
+This package contains the session-based workflow engine,
+domain registries, and database-backed logic.
 """
 
 __all__ = [
