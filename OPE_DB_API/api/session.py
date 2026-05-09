@@ -77,4 +77,5 @@ def api_close_session(
 ):
     ses = close_session(db, session_id=session_id)
     db.commit()
+    db.refresh(ses)
     return ses
