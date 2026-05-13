@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 
 from OPE_DB_API.registry import (
-    LIVE_TABLE_REGISTRY,
     OVERLAY_TABLE_REGISTRY,
 )
 from OPE_DB_API.crud.session import (
@@ -15,12 +14,14 @@ from OPE_DB_API.crud.live.write import (
     delete_live_row,
 )
 from OPE_DB_API.crud.history.write import write_history
+from OPE_DB_API.crud.sync.snapshot import fetch_snapshot_subtree
 
 def commit_session(
     db: Session,
     *,
     domain: str,
     session_id: int,
+    owner_attribute_id: int | None = None
 ):
     """
     Commit all staged overlay changes for a session.
@@ -28,7 +29,6 @@ def commit_session(
 
     validate_session_active(db, session_id=session_id)
 
-    Live = LIVE_TABLE_REGISTRY[domain]
     Overlay = OVERLAY_TABLE_REGISTRY[domain]
 
     overlay_rows = db.query(Overlay).filter(
@@ -84,19 +84,53 @@ def commit_session(
             )
             
         elif o.operation_type == 3:  # DELETE
-            old_value = live.value
-            delete_live_row(db, live)
-            write_history(
-                db,
-                domain,
-                {
-                    "data_id": o.data_id,
-                    "session_id": session_id,
-                    "operation_type": 3,
-                    "old_value": old_value,
-                    "new_value": None,
-                },
-            )
+            if owner_attribute_id is not None:
+                    root_node_id = live.node_id
+
+                    subtree_rows = fetch_snapshot_subtree(
+                        db=db,
+                        domain=domain,
+                        root_node_id=root_node_id,
+                        owner_attribute_id=owner_attribute_id,
+                    )
+
+                    for row in subtree_rows:
+                        live_row = get_live_row(db, domain, row.data_id)
+                        if live_row is None:
+                            continue
+                        
+                        old_value = live_row.value
+                        delete_live_row(db, live_row)
+
+                        write_history(
+                            db,
+                            domain,
+                            {
+                                "data_id": live_row.data_id,
+                                "session_id": session_id,
+                                "operation_type": 3,
+                                "old_value": old_value,
+                                "new_value": None,
+                            },
+                        )
+
+            # ✅ CASE 2: Single-row delete (current behavior)
+            else:
+                old_value = live.value
+                delete_live_row(db, live)
+
+                write_history(
+                    db,
+                    domain,
+                    {
+                        "data_id": o.data_id,
+                        "session_id": session_id,
+                        "operation_type": 3,
+                        "old_value": old_value,
+                        "new_value": None,
+                    },
+                )
+
     
     # Clear overlay
     db.query(Overlay).filter(

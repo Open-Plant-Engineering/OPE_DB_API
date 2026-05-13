@@ -64,6 +64,7 @@ def api_commit_work(
     code: str,
     domain: str,
     session_id: int,
+    owner_attribute_id: int | None = None,
     db: Session = Depends(db_session),
 ):
     validate_domain(domain)
@@ -75,6 +76,7 @@ def api_commit_work(
             db=db,
             domain=domain,
             session_id=session_id,
+            owner_attribute_id=owner_attribute_id,
         )
         db.commit()
 
