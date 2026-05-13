@@ -40,10 +40,11 @@ def commit_session(
 
         # Guard: UPDATE / DELETE must have existing live row
         if o.operation_type in (2, 3) and live is None:
-            raise ValueError(
+            print(
                 f"Cannot apply operation {o.operation_type} "
                 f"because live row does not exist for data_id={o.data_id}"
             )
+            continue
 
         if o.operation_type == 1:  # CREATE
             insert_live_row(
